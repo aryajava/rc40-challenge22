@@ -1,0 +1,28 @@
+{
+  "name": "rc40-challenge22",
+  "version": "1.0.0",
+  "description": "This BREADS (Browse, Read, Edit, Add, Delete, Sort) project is an Express JS application utilizing MongoDB for data storage.",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aryajava/rc40-challenge22.git"
+  },
+  "keywords": [
+    "nodejs",
+    "javascript",
+    "jquery",
+    "pagination",
+    "mongodb",
+    "expressjs",
+    "ejs-template-engine",
+    "breads"
+  ],
+  "author": "aryajava",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/aryajava/rc40-challenge22/issues"
+  },
+  "homepage": "https://github.com/aryajava/rc40-challenge22#readme"
+}
