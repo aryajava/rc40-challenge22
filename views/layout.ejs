@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/vendor/bootstrap/bootstrap.min.css" />
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="/vendor/fontawesome/all.min.css" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <%- body %>
+
+    <!-- jQuery dan Popper.js (Jika Menggunakan Bootstrap 4) -->
+    <% if (typeof jquery !== 'undefined') { %>
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/popper/popper.min.js"></script>
+    <% } %>
+
+    <!-- Bootstrap JS -->
+    <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="/javascripts/script.js"></script>
+  </body>
+</html>
+
