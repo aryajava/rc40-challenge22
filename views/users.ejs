@@ -1,0 +1,215 @@
+<%- include('layout') %>
+<div class="row">
+  <div class="col-md-10 mt-3 mx-auto">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title text-center my-1 mx-auto">MongoDB Breads (Browse, Read, Edit, Add, Delete, Sort)</h3>
+      </div>
+      <div class="card-body">
+        <form action="" method="get">
+          <div class="row mb-3">
+            <div class="col-md-3 align-self-center">
+              <label for="name">Name</label>
+            </div>
+            <div class="col-md-9 align-self-center">
+              <input type="text" class="form-control" name="name" id="name" placeholder="Insert your name" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3 align-self-center">
+              <label for="phone">Phone</label>
+            </div>
+            <div class="col-md-9 align-self-center">
+              <input type="text" class="form-control" name="phone" id="phone" placeholder="Insert your phone" />
+            </div>
+          </div>
+          <div class="d-flex flex-row align-items-center justify-content-start mt-3">
+            <button type="submit" class="btn btn-info me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+            <a class="btn btn-warning" href="/" role="button"><i class="fa-solid fa-rotate"></i></a>
+          </div>
+        </form>
+      </div>
+      <hr />
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col" class="col-md-1">No.</th>
+              <% if (sortBy === 'name' && sortMode === 'asc') { %>
+              <th scope="col" class="col">
+                <a href="/?sortBy=name&sortMode=desc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-up me-2"></i>Name</a>
+              </th>
+              <% } else if (sortBy === 'name' && sortMode === 'desc') { %>
+              <th scope="col" class="col">
+                <a href="/?sortBy=name&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-down me-2"></i>Name</a>
+              </th>
+              <% } else { %>
+              <th scope="col" class="col">
+                <a href="/?sortBy=name&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort me-2"></i>Name</a>
+              </th>
+              <% } %> <% if (sortBy === 'phone' && sortMode === 'asc') { %>
+              <th scope="col" class="col-md-2">
+                <a href="/?sortBy=phone&sortMode=desc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-up me-2"></i>Phone</a>
+              </th>
+              <% } else if (sortBy === 'phone' && sortMode === 'desc') { %>
+              <th scope="col" class="col-md-2">
+                <a href="/?sortBy=phone&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-down me-2"></i>Phone</a>
+              </th>
+              <% } else { %>
+              <th scope="col" class="col-md-2">
+                <a href="/?sortBy=phone&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort me-2"></i>Phone</a>
+              </th>
+              <% } %>
+              <th scope="col-md-3" class="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% data.forEach((user, index) => { %>
+            <tr>
+              <td scope="row" class="col-md-1"><%= index + offset + 1 %></td>
+              <td class="col"><%= user.name %></td>
+              <td class="col"><%= user.phone %></td>
+              <td class="col-md-3">
+                <a class="btn btn-success" href="/<%= user._id %>" role="button"><i class="fa-solid fa-pen"></i></a>
+                <button type="button" class="btn btn-danger" onclick="showDeleteModal('<%= user._id %>', '<%= user.name %>')"><i class="fa-solid fa-trash"></i></button>
+                <a name="" id="" class="btn btn-warning" href="/users/<%= user._id %>" role="button"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer">
+        <div class="d-flex flex-row justify-content-between">
+          <a class="btn btn-primary align-items-center" href="user/add" role="button"><i class="fa-regular fa-plus"></i></a>
+          <nav aria-label="Page navigation">
+            <ul class="pagination mb-0">
+              <% if (total > 0 && pages > 1) { %>
+              <!-- previous -->
+              <% if (page > 1) { %>
+              <li class="page-item">
+                <a class="page-link" href="/?<%= searchPage %>&page=<%= page - 1 %>" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              <% } %>
+
+              <!-- first page -->
+              <li class="page-item <%= page === 1 ? 'active' : '' %>">
+                <a class="page-link" href="/?<%= searchPage %>&page=1">1</a>
+              </li>
+
+              <!-- ellipsis before -->
+              <% if (page > 3) { %>
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+              <% } %>
+
+              <!-- page range around current page -->
+              <% for (let i = Math.max(2, page - 1); i <= Math.min(pages - 1, page + 1); i++) { %>
+              <li class="page-item <%= i === page ? 'active' : '' %>">
+                <a class="page-link" href="/?<%= searchPage %>&page=<%= i %>"><%= i %></a>
+              </li>
+              <% } %>
+
+              <!-- ellipsis after -->
+              <% if (page < pages - 2) { %>
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+              <% } %>
+
+              <!-- last page -->
+              <% if (pages > 1) { %>
+              <li class="page-item <%= page === pages ? 'active' : '' %>">
+                <a class="page-link" href="/?<%= searchPage %>&page=<%= pages %>"><%= pages %></a>
+              </li>
+              <% } %>
+
+              <!-- next -->
+              <% if (page < pages) { %>
+              <li class="page-item">
+                <a class="page-link" href="/?<%= searchPage %>&page=<%= page + 1 %>" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
+              <% } %> <% } %>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="formModalLabel">User Form</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form id="addEditForm" action="" method="post">
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-3 align-self-center">
+              <label for="name">Name</label>
+            </div>
+            <div class="col-md-9 align-self-center">
+              <input type="text" class="form-control" name="name" id="name" placeholder="Insert your name" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3 align-self-center">
+              <label for="phone">Phone</label>
+            </div>
+            <div class="col-md-9 align-self-center">
+              <input type="text" class="form-control" name="phone" id="phone" placeholder="Insert your phone" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-warning">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Apakah kamu yakin akan menghapus data '<span id="deleteItemName"></span>'?</p>
+      </div>
+      <div class="modal-footer">
+        <form id="deleteForm" action="" method="post">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+          <button type="submit" class="btn btn-warning">Yes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const showFormModal = (id, name) => {
+    document.getElementById("addEditForm").action = "/" + id;
+    document.getElementById("addEditForm").method = "PUT";
+    var formModal = new bootstrap.Modal(document.getElementById("formModal"));
+    formModal.show();
+  };
+  const showDeleteModal = (id, name) => {
+    document.getElementById("deleteItemName").innerText = name;
+    document.getElementById("deleteForm").action = "/todos/delete/" + id;
+    var deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
+    deleteModal.show();
+  };
+</script>
+
