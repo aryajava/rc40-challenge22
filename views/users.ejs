@@ -6,26 +6,24 @@
         <h3 class="card-title text-center my-1 mx-auto">MongoDB Breads (Browse, Read, Edit, Add, Delete, Sort)</h3>
       </div>
       <div class="card-body">
-        <form action="" method="get">
+        <form action="" method="get" id="limitForm">
           <div class="row mb-3">
-            <div class="col-md-3 align-self-center">
-              <label for="name">Name</label>
-            </div>
-            <div class="col-md-9 align-self-center">
-              <input type="text" class="form-control" name="name" id="name" placeholder="Insert your name" />
+            <div class="col-md-1 align-self-center">
+              Show
+              <input type="number" min="1" class="form-control" name="limit" id="limitData" placeholder="" value="<%= limit %>" />
+              Entries
             </div>
           </div>
+        </form>
+        <form action="" method="get" id="searchForm">
           <div class="row mb-3">
             <div class="col-md-3 align-self-center">
-              <label for="phone">Phone</label>
+              <input type="text" class="form-control" name="search" id="search" placeholder="Search" value="<%= search %>" />
             </div>
-            <div class="col-md-9 align-self-center">
-              <input type="text" class="form-control" name="phone" id="phone" placeholder="Insert your phone" />
+            <div class="col-md-3 align-self-center">
+              <button type="submit" class="btn btn-info me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
+              <a class="btn btn-warning" href="/" role="button"><i class="fa-solid fa-rotate"></i></a>
             </div>
-          </div>
-          <div class="d-flex flex-row align-items-center justify-content-start mt-3">
-            <button type="submit" class="btn btn-info me-2"><i class="fa-solid fa-magnifying-glass"></i></button>
-            <a class="btn btn-warning" href="/" role="button"><i class="fa-solid fa-rotate"></i></a>
           </div>
         </form>
       </div>
@@ -70,7 +68,7 @@
               <td class="col"><%= user.name %></td>
               <td class="col"><%= user.phone %></td>
               <td class="col-md-3">
-                <a class="btn btn-success" href="/<%= user._id %>" role="button"><i class="fa-solid fa-pen"></i></a>
+                <button type="button" class="btn btn-success" onclick="showFormModal('edit','<%= user._id %>', '<%= user.name %>', '<%= user.phone %>')"><i class="fa-solid fa-pen"></i></button>
                 <button type="button" class="btn btn-danger" onclick="showDeleteModal('<%= user._id %>', '<%= user.name %>')"><i class="fa-solid fa-trash"></i></button>
                 <a name="" id="" class="btn btn-warning" href="/users/<%= user._id %>" role="button"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
               </td>
@@ -81,7 +79,7 @@
       </div>
       <div class="card-footer">
         <div class="d-flex flex-row justify-content-between">
-          <a class="btn btn-primary align-items-center" href="user/add" role="button"><i class="fa-regular fa-plus"></i></a>
+          <button type="button" class="btn btn-success" onclick="showFormModal('add')"><i class="fa-regular fa-plus"></i></button>
           <nav aria-label="Page navigation">
             <ul class="pagination mb-0">
               <% if (total > 0 && pages > 1) { %>
@@ -150,14 +148,14 @@
         <h5 class="modal-title" id="formModalLabel">User Form</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form id="addEditForm" action="" method="post">
+      <form id="addEditForm" onsubmit="handleSubmit(event)">
         <div class="modal-body">
           <div class="row mb-3">
             <div class="col-md-3 align-self-center">
               <label for="name">Name</label>
             </div>
             <div class="col-md-9 align-self-center">
-              <input type="text" class="form-control" name="name" id="name" placeholder="Insert your name" />
+              <input type="text" class="form-control" name="name" id="nameFormModal" placeholder="Insert your name" value="" />
             </div>
           </div>
           <div class="row mb-3">
@@ -165,7 +163,7 @@
               <label for="phone">Phone</label>
             </div>
             <div class="col-md-9 align-self-center">
-              <input type="text" class="form-control" name="phone" id="phone" placeholder="Insert your phone" />
+              <input type="text" class="form-control" name="phone" id="phoneFormModal" placeholder="Insert your phone" value="" />
             </div>
           </div>
         </div>
@@ -189,27 +187,112 @@
         <p>Apakah kamu yakin akan menghapus data '<span id="deleteItemName"></span>'?</p>
       </div>
       <div class="modal-footer">
-        <form id="deleteForm" action="" method="post">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          <button type="submit" class="btn btn-warning">Yes</button>
-        </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <button type="button" class="btn btn-warning" onclick="handleDelete()">Yes</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-  const showFormModal = (id, name) => {
-    document.getElementById("addEditForm").action = "/" + id;
-    document.getElementById("addEditForm").method = "PUT";
+  document.getElementById("limitData").addEventListener("change", function () {
+    submitCombinedForm();
+  });
+
+  document.getElementById("search").addEventListener("input", function () {
+    submitCombinedForm();
+  });
+
+  function submitCombinedForm() {
+    const limitForm = document.getElementById("limitForm");
+    const searchForm = document.getElementById("searchForm");
+
+    const limit = limitForm.querySelector("input[name='limit']").value;
+    const search = searchForm.querySelector("input[name='search']").value;
+
+    const params = new URLSearchParams();
+    if (limit) params.append("limit", limit);
+    if (search) params.append("search", search);
+
+    window.location.href = `/?${params.toString()}`;
+  }
+
+  let currentMode = "add";
+  let currentUserId = "";
+
+  const showFormModal = (mode, id = "", name = "", phone = "") => {
+    currentMode = mode;
+    currentUserId = id;
+    const formModalLabel = document.getElementById("formModalLabel");
+
+    if (mode === "edit") {
+      formModalLabel.innerText = "Edit User";
+      document.getElementById("nameFormModal").value = name;
+      document.getElementById("phoneFormModal").value = phone;
+    } else {
+      formModalLabel.innerText = "Add User";
+      document.getElementById("nameFormModal").value = "";
+      document.getElementById("phoneFormModal").value = "";
+    }
+
     var formModal = new bootstrap.Modal(document.getElementById("formModal"));
     formModal.show();
   };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const name = document.getElementById("nameFormModal").value;
+    const phone = document.getElementById("phoneFormModal").value;
+
+    const url = currentMode === "edit" ? `/${currentUserId}` : "/";
+    const method = currentMode === "edit" ? "PUT" : "POST";
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, phone }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+      console.log(result);
+      location.reload();
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
+
   const showDeleteModal = (id, name) => {
+    currentUserId = id;
     document.getElementById("deleteItemName").innerText = name;
-    document.getElementById("deleteForm").action = "/todos/delete/" + id;
     var deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
     deleteModal.show();
   };
-</script>
 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/${currentUserId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const result = await response.json();
+      console.log(result);
+      location.reload();
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
+</script>

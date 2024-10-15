@@ -5,7 +5,7 @@ const User = require("../models/User");
 const { ObjectId } = require("mongodb");
 
 router.get("/", async (req, res, next) => {
-  const { page = 1, limit = 5, query = "", sortBy = "_id", sortMode = "desc" } = req.query;
+  const { page = 1, limit = 5, search = "", sortBy = "_id", sortMode = "desc" } = req.query;
   const dbConnection = db.getDb();
 
   try {
@@ -13,14 +13,13 @@ router.get("/", async (req, res, next) => {
     const offset = (page - 1) * limit;
     const sort = { [sortBy]: sortMode === "desc" ? -1 : 1 };
 
-    const users = await usersCollection
-      .find({ name: new RegExp(query, "i") })
-      .sort(sort)
-      .skip(offset)
-      .limit(parseInt(limit))
-      .toArray();
+    const query = {
+      $or: [{ name: new RegExp(search, "i") }, { phone: new RegExp(search, "i") }],
+    };
 
-    const total = await usersCollection.countDocuments({ name: new RegExp(query, "i") });
+    const users = await usersCollection.find(query).sort(sort).skip(offset).limit(parseInt(limit)).toArray();
+
+    const total = await usersCollection.countDocuments(query);
     const pages = Math.ceil(total / limit);
 
     const searchPage = Object.keys(req.query)
@@ -35,10 +34,12 @@ router.get("/", async (req, res, next) => {
       page: parseInt(page),
       limit: parseInt(limit),
       offset,
-      query,
+      search,
       sortBy,
       sortMode,
       searchPage,
+      showModal: false,
+      user: null,
     });
   } catch (err) {
     next(err);
@@ -49,11 +50,14 @@ router.get("/:id", async (req, res, next) => {
   const dbConnection = db.getDb();
 
   try {
+    if (!ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ message: "Invalid ID" });
+    }
     const user = await dbConnection.collection("users").findOne({ _id: new ObjectId(req.params.id) });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.json(user);
+    res.render("users", { user, showModal: true });
   } catch (err) {
     next(err);
   }
@@ -72,6 +76,7 @@ router.post("/", async (req, res, next) => {
 });
 
 router.put("/:id", async (req, res, next) => {
+  console.log("PUT request received for ID:", req.params.id);
   const { name, phone } = req.body;
   const dbConnection = db.getDb();
 
