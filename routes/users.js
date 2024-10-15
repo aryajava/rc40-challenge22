@@ -17,10 +17,15 @@ router.get("/", async (req, res, next) => {
       $or: [{ name: new RegExp(search, "i") }, { phone: new RegExp(search, "i") }],
     };
 
-    const users = await usersCollection.find(query).sort(sort).skip(offset).limit(parseInt(limit)).toArray();
+    let users;
+    if (parseInt(limit) === 0) {
+      users = await usersCollection.find(query).sort(sort).toArray();
+    } else {
+      users = await usersCollection.find(query).sort(sort).skip(offset).limit(parseInt(limit)).toArray();
+    }
 
     const total = await usersCollection.countDocuments(query);
-    const pages = Math.ceil(total / limit);
+    const pages = parseInt(limit) === 0 ? 1 : Math.ceil(total / limit);
 
     const searchPage = Object.keys(req.query)
       .filter((key) => key !== "page")
@@ -38,8 +43,6 @@ router.get("/", async (req, res, next) => {
       sortBy,
       sortMode,
       searchPage,
-      showModal: false,
-      user: null,
     });
   } catch (err) {
     next(err);
