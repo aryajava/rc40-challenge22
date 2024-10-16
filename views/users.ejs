@@ -1,49 +1,54 @@
 <%- include('layout') %>
-<div class="row">
-  <div class="col-md-10 mt-3 mx-auto">
-    <div class="card">
-      <div class="card-header">
-        <h3 class="card-title text-center my-1 mx-auto">MongoDB Breads (Browse, Read, Edit, Add, Delete, Sort)</h3>
+<div class="m-3">
+  <div class="card">
+    <div class="card-header text-center">
+      <h3 class="card-title my-1">MongoDB Breads (Browse, Read, Edit, Add, Delete, Sort)</h3>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-12 col-md-3 mb-3">
+          <form action="" method="get" id="limitForm">
+            <div class="input-group">
+              <span class="input-group-text">Show</span>
+              <select class="form-control text-center" name="limit" id="limit">
+                <option value="5" <%= limit == '5'? 'selected': '' %>>5</option>
+                <option value="10" <%= limit == '10'? 'selected': '' %>>10</option>
+                <option value="0" <%= limit == '0'? 'selected': '' %>>All</option>
+              </select>
+              <span class="input-group-text">Entries</span>
+            </div>
+          </form>
+        </div>
+        <div class="col-12 col-md-9 mb-3">
+          <form action="" method="get" id="searchForm">
+            <div class="input-group">
+              <input type="text" class="form-control" name="search" id="search" placeholder="Search" value="<%= search %>" />
+              <button class="btn btn-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+              <a class="btn btn-warning" href="/" role="button"><i class="fa-solid fa-rotate"></i></a>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="d-flex flex-row justify-content-start">
-        <form action="" method="get" id="limitForm" class="col m-3">
-          <div class="input-group mb-3">
-            <span class="input-group-text">Show</span>
-            <select class="form-control" name="limit" id="limit">
-              <option value="5" <%= limit == '5'? 'selected': '' %>>5</option>
-              <option value="10" <%= limit == '10'? 'selected': '' %>>10</option>
-              <option value="0" <%= limit == '0'? 'selected': '' %>>All</option>
-            </select>
-            <span class="input-group-text">Entries</span>
-          </div>
-        </form>
-        <form action="" method="get" id="searchForm" class="m-3 col-md-9">
-          <div class="input-group">
-            <input type="text" class="form-control" name="search" id="search" placeholder="Search" value="<%= search %>" />
-            <button class="btn btn-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-            <a name="" id="" class="btn btn btn-warning" href="/" role="button"><i class="fa-solid fa-rotate"></i></a>
-          </div>
-        </form>
-      </div>
-      <hr />
       <div class="table-responsive">
         <table class="table table-striped">
           <thead>
             <tr>
               <th scope="col" class="col-md-1">No.</th>
-              <% const baseUrl = searchPage.replace(/&?sortBy=[^&]*/g, '').replace(/&?sortMode=[^&]*/g, ''); %> <% if (sortBy === 'name' && sortMode === 'asc') { %>
-              <th scope="col" class="col">
+              <% const baseUrl = searchPage.replace(/&?sortBy=[^&]*/g, '').replace(/&?sortMode=[^&]*/g, ''); %> 
+              <% if (sortBy === 'name' && sortMode === 'asc') { %>
+              <th scope="col">
                 <a href="/?<%= baseUrl %>&sortBy=name&sortMode=desc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-up me-2"></i>Name</a>
               </th>
               <% } else if (sortBy === 'name' && sortMode === 'desc') { %>
-              <th scope="col" class="col">
+              <th scope="col">
                 <a href="/?<%= baseUrl %>&sortBy=name&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-down me-2"></i>Name</a>
               </th>
               <% } else { %>
-              <th scope="col" class="col">
+              <th scope="col">
                 <a href="/?<%= baseUrl %>&sortBy=name&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort me-2"></i>Name</a>
               </th>
-              <% } %> <% if (sortBy === 'phone' && sortMode === 'asc') { %>
+              <% } %> 
+              <% if (sortBy === 'phone' && sortMode === 'asc') { %>
               <th scope="col" class="col-md-2">
                 <a href="/?<%= baseUrl %>&sortBy=phone&sortMode=desc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-up me-2"></i>Phone</a>
               </th>
@@ -68,75 +73,75 @@
               <td class="col-md-3">
                 <button type="button" class="btn btn-success" onclick="showModel('edit','<%= user._id %>', '<%= user.name %>', '<%= user.phone %>')"><i class="fa-solid fa-pen"></i></button>
                 <button type="button" class="btn btn-danger" onclick="showModel('delete','<%= user._id %>', '<%= user.name %>')"><i class="fa-solid fa-trash"></i></button>
-                <a name="" id="" class="btn btn-warning" href="/users/<%= user._id %>" role="button"><i class="fa-solid fa-right-to-bracket"></i></a>
+                <a class="btn btn-warning" href="/users/<%= user._id %>" role="button"><i class="fa-solid fa-right-to-bracket"></i></a>
               </td>
             </tr>
             <% }) %>
           </tbody>
         </table>
       </div>
-      <div class="card-footer d-flex justify-content-between align-items-center">
-        <button type="button" class="btn btn-primary" onclick="showModel('add')">
-          <i class="fa-regular fa-plus"></i>
-        </button>
-        <div class="d-flex align-items-center">
-          <div class="me-3">Showing <%= offset + 1 %> to <%= Math.min(offset + limit, total) %> of <%= total %> entries</div>
-          <nav aria-label="Page navigation">
-            <ul class="pagination mb-0">
-              <% if (total > 0 && pages > 1) { %>
-              <!-- previous -->
-              <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
-                <a class="page-link" href="/?<%= searchPage %>&page=<%= page - 1 %>" aria-label="Previous">
-                  <span aria-hidden="true">&laquo;</span>
-                </a>
-              </li>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <button type="button" class="btn btn-primary" onclick="showModel('add')">
+        <i class="fa-regular fa-plus"></i>
+      </button>
+      <div class="d-flex align-items-center">
+        <div class="me-3">Showing <%= offset + 1 %> to <%= Math.min(offset + limit, total) %> of <%= total %> entries</div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination mb-0">
+            <% if (total > 0 && pages > 1) { %>
+            <!-- previous -->
+            <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+              <a class="page-link" href="/?<%= searchPage %>&page=<%= page - 1 %>" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
 
-              <!-- first page -->
-              <li class="page-item <%= page === 1 ? 'active' : '' %>">
-                <a class="page-link" href="/?<%= searchPage %>&page=1">1</a>
-              </li>
+            <!-- first page -->
+            <li class="page-item <%= page === 1 ? 'active' : '' %>">
+              <a class="page-link" href="/?<%= searchPage %>&page=1">1</a>
+            </li>
 
-              <!-- ellipsis before -->
-              <% if (page > 3) { %>
-              <li class="page-item disabled">
-                <span class="page-link">...</span>
-              </li>
-              <% } %>
+            <!-- ellipsis before -->
+            <% if (page > 3) { %>
+            <li class="page-item disabled">
+              <span class="page-link">...</span>
+            </li>
+            <% } %>
 
-              <!-- page range around current page -->
-              <% for (let i = Math.max(2, page - 1); i <= Math.min(pages - 1, page + 1); i++) { %>
-              <li class="page-item <%= i === page ? 'active' : '' %>">
-                <a class="page-link" href="/?<%= searchPage %>&page=<%= i %>"><%= i %></a>
-              </li>
-              <% } %>
+            <!-- page range around current page -->
+            <% for (let i = Math.max(2, page - 1); i <= Math.min(pages - 1, page + 1); i++) { %>
+            <li class="page-item <%= i === page ? 'active' : '' %>">
+              <a class="page-link" href="/?<%= searchPage %>&page=<%= i %>"><%= i %></a>
+            </li>
+            <% } %>
 
-              <!-- ellipsis after -->
-              <% if (page < pages - 2) { %>
-              <li class="page-item disabled">
-                <span class="page-link">...</span>
-              </li>
-              <% } %>
+            <!-- ellipsis after -->
+            <% if (page < pages - 2) { %>
+            <li class="page-item disabled">
+              <span class="page-link">...</span>
+            </li>
+            <% } %>
 
-              <!-- last page -->
-              <li class="page-item <%= page === pages ? 'active' : '' %>">
-                <a class="page-link" href="/?<%= searchPage %>&page=<%= pages %>"><%= pages %></a>
-              </li>
+            <!-- last page -->
+            <li class="page-item <%= page === pages ? 'active' : '' %>">
+              <a class="page-link" href="/?<%= searchPage %>&page=<%= pages %>"><%= pages %></a>
+            </li>
 
-              <!-- next -->
-              <li class="page-item <%= page === pages ? 'disabled' : '' %>">
-                <a class="page-link" href="/?<%= searchPage %>&page=<%= page + 1 %>" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
-                </a>
-              </li>
-              <% } else { %>
-              <!-- Single page case -->
-              <li class="page-item active">
-                <a class="page-link" href="#">1</a>
-              </li>
-              <% } %>
-            </ul>
-          </nav>
-        </div>
+            <!-- next -->
+            <li class="page-item <%= page === pages ? 'disabled' : '' %>">
+              <a class="page-link" href="/?<%= searchPage %>&page=<%= page + 1 %>" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+            <% } else { %>
+            <!-- Single page case -->
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <% } %>
+          </ul>
+        </nav>
       </div>
     </div>
   </div>
