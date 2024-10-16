@@ -1,14 +1,29 @@
-<%- include('layout') %>
+<%- include('partials/header') %>
 <div class="row">
   <div class="col">
     <div class="card">
-      <div class="card-header">Header</div>
+      <div class="card-header">Todos for User <%= userId %></div>
       <div class="card-body">
-        <h4 class="card-title">Title</h4>
-        <p class="card-text">Todos</p>
+        <h4 class="card-title">Todos List</h4>
       </div>
-      <div class="card-footer text-muted">Footer</div>
+      <div class="">
+        <ul class="list-group">
+          <% todos.forEach(todo => { %>
+          <li
+            class="list-group-item border-0 d-flex my-2 justify-content-between align-items-center <%= todo.complete ? 'bg-green-pastel' : (new Date(todo.deadline) < new Date() ? 'bg-red-pastel' : 'bg-grey-pastel') %>"
+          >
+            <p class="fs-6 fw-medium text-center d-flex align-items-center m-0"><%= todo.deadline.toDateString() %> <%= todo.title %></p>
+            <div>
+              <button class="btn btn-primary btn-sm">Edit</button>
+              <button class="btn btn-danger btn-sm">Delete</button>
+            </div>
+          </li>
+          <% }) %>
+        </ul>
+      </div>
+      <div class="card-footer text-muted">Total Todos: <%= total %></div>
     </div>
   </div>
 </div>
+<%- include('partials/footer') %>
 

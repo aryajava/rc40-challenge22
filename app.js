@@ -21,7 +21,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/vendor", express.static(path.join(__dirname, "public/vendor")));
 
 app.use("/", usersRouter);
-app.use("/todos", todosRouter);
+app.use("/", todosRouter);
 
 db.connectToDb();
 
@@ -37,3 +37,4 @@ app.use(function (err, req, res, next) {
 });
 
 module.exports = app;
+

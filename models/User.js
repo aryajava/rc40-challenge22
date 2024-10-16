@@ -1,3 +1,5 @@
+const { ObjectId } = require("mongodb");
+
 class User {
   constructor(name, phone) {
     this.name = name;
@@ -15,11 +17,38 @@ class User {
     return true;
   }
 
-  // Method untuk menyimpan user ke database
+  static async getAll(db, query = {}, sort = {}, offset = 0, limit = 0) {
+    const usersCollection = db.collection("users");
+    if (limit === 0) {
+      return await usersCollection.find(query).sort(sort).toArray();
+    } else {
+      return await usersCollection.find(query).sort(sort).skip(offset).limit(limit).toArray();
+    }
+  }
+
+  static async getById(db, userId) {
+    const usersCollection = db.collection("users");
+    const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+    return user;
+  }
+
   static async save(db, userData) {
     this.validate(userData);
     const usersCollection = db.collection("users");
     const result = await usersCollection.insertOne(userData);
+    return result;
+  }
+
+  static async update(db, userId, userData) {
+    this.validate(userData);
+    const usersCollection = db.collection("users");
+    const result = await usersCollection.updateOne({ _id: new ObjectId(userId) }, { $set: userData });
+    return result;
+  }
+
+  static async delete(db, userId) {
+    const usersCollection = db.collection("users");
+    const result = await usersCollection.deleteOne({ _id: new ObjectId(userId) });
     return result;
   }
 }
