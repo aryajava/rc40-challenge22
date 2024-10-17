@@ -32,6 +32,11 @@ class User {
     return user;
   }
 
+  static async getCount(db, query = {}) {
+    const usersCollection = db.collection("users");
+    return await usersCollection.countDocuments(query);
+  }
+
   static async save(db, userData) {
     this.validate(userData);
     const usersCollection = db.collection("users");
@@ -54,3 +59,4 @@ class User {
 }
 
 module.exports = User;
+

@@ -24,7 +24,7 @@ router.get("/", async (req, res, next) => {
       users = await User.getAll(dbConnection, query, sort, offset, parseInt(limit));
     }
 
-    const total = await dbConnection.collection("users").countDocuments(query);
+    const total = await User.getCount(dbConnection, query);
     const pages = parseInt(limit) === 0 ? 1 : Math.ceil(total / limit);
 
     const searchPage = Object.keys(req.query)
@@ -113,3 +113,4 @@ router.delete("/:id", async (req, res, next) => {
 });
 
 module.exports = router;
+

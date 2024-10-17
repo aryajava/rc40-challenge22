@@ -1,12 +1,17 @@
 .bg-red-pastel {
-  background-color: rgb(220, 134, 134) !important;
+  background-color: rgb(255, 210, 210) !important;
 }
 
 .bg-grey-pastel {
-  background-color: rgb(199, 200, 204) !important;
+  background-color: rgb(225, 225, 225) !important;
 }
 
 .bg-green-pastel {
-  background-color: rgb(175, 200, 173) !important;
+  background-color: rgb(210, 255, 210) !important;
 }
 
+.h-center {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}

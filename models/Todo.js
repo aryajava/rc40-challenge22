@@ -34,6 +34,11 @@ class Todo {
     }
   }
 
+  static async getCount(db, query = {}) {
+    const todosCollection = db.collection("todos");
+    return await todosCollection.countDocuments(query);
+  }
+
   static async getById(db, userId, todoId) {
     const todosCollection = db.collection("todos");
     const todo = await todosCollection.findOne({ _id: ObjectId(todoId), executor: ObjectId(userId) });
@@ -62,3 +67,4 @@ class Todo {
 }
 
 module.exports = Todo;
+

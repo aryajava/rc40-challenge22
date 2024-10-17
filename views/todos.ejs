@@ -1,21 +1,93 @@
 <%- include('partials/header') %>
-<div class="row">
+<div class="row mt-3">
   <div class="col">
     <div class="card">
       <div class="card-header">Todos for User <%= userId %></div>
       <div class="card-body">
-        <h4 class="card-title">Todos List</h4>
+        <form action="" method="get">
+          <input type="hidden" name="sortBy" value="<%= sortBy %>">
+          <input type="hidden" name="sortMode" value="<%= sortMode %>">
+          <div class="row mb-3">
+            <div class="col-md-3 align-self-center">
+              <label for="title">Title</label>
+            </div>
+            <div class="col-md-9 align-self-center">
+              <input type="text" class="form-control" name="title" value="<%= title %>" id="title" placeholder="Insert your title" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3 align-self-center">
+              <label for="startdate">Deadline</label>
+            </div>
+            <div class="col-md-4 align-self-center">
+              <input type="datetime-local" class="form-control" name="startdateDeadline" value="<%= startdateDeadline %>" id="startdate" />
+            </div>
+            <div class="col-md-1 align-self-center text-center">
+              <label for="enddate">s.d.</label>
+            </div>
+            <div class="col-md-4 align-self-center">
+              <input type="datetime-local" class="form-control" name="enddateDeadline" value="<%= enddateDeadline %>" id="enddate" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-3 align-self-center">
+              <label for="complete">Complete</label>
+            </div>
+            <div class="col-md-9 align-self-center">
+              <select class="form-select" name="complete" id="complete">
+                <option selected disabled class="d-none">&minus; Select Complete &minus;</option>
+                <option value="false" <%=complete==='false' ? 'selected' : '' %>>Not Yet</option>
+                <option value="true" <%=complete==='true' ? 'selected' : '' %>>Done</option>
+              </select>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12 col-md-4 col-lg-3 mb-2 mb-md-0">
+              <% const baseUrl = searchPage.replace(/&?sortBy=[^&]*/g, '').replace(/&?sortMode=[^&]*/g, ''); %>
+              <% if (sortBy === 'deadline' && sortMode === 'asc') { %>
+              <a href="?<%= baseUrl %>&sortBy=deadline&sortMode=desc" class="btn btn-success w-auto"><i class="fa-solid fa-sort-up me-2"></i>Sort by deadline</a>
+              <% } else if (sortBy === 'deadline' && sortMode === 'desc') { %>
+              <a href="?<%= baseUrl %>&sortBy=deadline&sortMode=asc" class="btn btn-success w-auto"><i class="fa-solid fa-sort-down me-2"></i>Sort by deadline</a>
+              <% } else { %>
+              <a href="?<%= baseUrl %>&sortBy=deadline&sortMode=asc" class="btn btn-success w-auto"><i class="fa-solid fa-sort me-2"></i>Sort by deadline</a>
+              <% } %>
+            </div>
+            <div class="col-12 col-md-8 col-lg-9 d-flex justify-content-start">
+              <a class="btn btn-warning me-2 w-auto" href="./todos" role="button"><i class="fa-solid fa-rotate"></i></a>
+              <button type="submit" class="btn btn-info w-auto"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+          </div>
+        </form>
       </div>
-      <div class="">
-        <ul class="list-group">
+      <hr class="m-0">
+      <div class="bg-light">
+        <form action="" method="post" class="mx-3">
+          <div class="input-group my-2">
+            <input type="text" class="form-control" id="title" name="title" placeholder="Add title" />
+            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-circle-down"></i></button>
+          </div>
+        </form>
+      </div>
+      <div class="row m-0">
+        <ul class="list-group p-0">
           <% todos.forEach(todo => { %>
+            <% const now = new Date();
+            const date = new Date(todo.deadline);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
+            const passedDeadline = date < now && !todo.complete;
+            %>
           <li
-            class="list-group-item border-0 d-flex my-2 justify-content-between align-items-center <%= todo.complete ? 'bg-green-pastel' : (new Date(todo.deadline) < new Date() ? 'bg-red-pastel' : 'bg-grey-pastel') %>"
+            class="list-group-item border-0 rounded d-flex flex-md-row my-2 justify-content-between align-items-start align-items-md-center position-relative <%= todo.complete ? 'bg-green-pastel' : (passedDeadline ? 'bg-red-pastel' : 'bg-grey-pastel') %>"
           >
-            <p class="fs-6 fw-medium text-center d-flex align-items-center m-0"><%= todo.deadline.toDateString() %> <%= todo.title %></p>
-            <div>
-              <button class="btn btn-primary btn-sm">Edit</button>
-              <button class="btn btn-danger btn-sm">Delete</button>
+            <p class="fs-6 fw-medium text-center text-md-start d-flex align-items-center m-0 mb-md-0"><%= formattedDate %> <%= todo.title %></p>
+            <div class="d-flex h-center">
+              <button class="btn btn-sm me-2"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-sm"><i class="fa-solid fa-trash"></i></button>
             </div>
           </li>
           <% }) %>
@@ -26,4 +98,3 @@
   </div>
 </div>
 <%- include('partials/footer') %>
-

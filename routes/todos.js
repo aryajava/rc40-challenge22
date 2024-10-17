@@ -4,10 +4,9 @@ const db = require("../db");
 const Todo = require("../models/Todo");
 const { ObjectId } = require("mongodb");
 
-// GET TODOS
 router.get("/users/:userId/todos", async (req, res, next) => {
   const { userId } = req.params;
-  const { page = 1, limit = 10, title = "", complete, startdateDeadline, enddateDeadline, sortBy = "_id", sortMode = "desc" } = req.query;
+  const { page = 1, limit = 10, title = "", complete = "", startdateDeadline = "", enddateDeadline = "", sortBy = "_id", sortMode = "desc" } = req.query;
   const dbConnection = db.getDb();
 
   try {
@@ -16,23 +15,44 @@ router.get("/users/:userId/todos", async (req, res, next) => {
 
     const query = {
       title: new RegExp(title, "i"),
-      ...(complete !== undefined && { complete: complete === "true" }),
-      ...(startdateDeadline && { deadline: { $gte: new Date(startdateDeadline) } }),
-      ...(enddateDeadline && { deadline: { $lte: new Date(enddateDeadline) } }),
+      ...(complete !== "" && { complete: complete === "true" }),
+      ...(startdateDeadline || enddateDeadline
+        ? {
+            deadline: {
+              ...(startdateDeadline && { $gte: new Date(startdateDeadline) }),
+              ...(enddateDeadline && { $lte: new Date(enddateDeadline) }),
+            },
+          }
+        : {}),
       executor: new ObjectId(userId),
     };
 
+    console.log(query);
+
     const todos = await Todo.getAll(dbConnection, query, sort, offset, parseInt(limit));
-    const total = await dbConnection.collection("todos").countDocuments(query);
+    const total = await Todo.getCount(dbConnection, query);
     const pages = Math.ceil(total / limit);
 
-    res.render("todos", { todos, total, pages, page: parseInt(page), limit: parseInt(limit), userId });
+    res.render("todos", {
+      todos,
+      total,
+      pages,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      userId,
+      title,
+      complete,
+      startdateDeadline,
+      enddateDeadline,
+      sortBy,
+      sortMode,
+      searchPage: req.url,
+    });
   } catch (err) {
     next(err);
   }
 });
 
-// GET TODO
 router.get("/users/:userId/todos/:id", async (req, res, next) => {
   const { userId, id } = req.params;
   const dbConnection = db.getDb();
@@ -48,7 +68,6 @@ router.get("/users/:userId/todos/:id", async (req, res, next) => {
   }
 });
 
-// CREATE TODO
 router.post("/users/:userId/todos", async (req, res, next) => {
   const { userId } = req.params;
   const { title } = req.body;
@@ -68,7 +87,6 @@ router.post("/users/:userId/todos", async (req, res, next) => {
   }
 });
 
-// UPDATE TODO
 router.put("/users/:userId/todos/:id", async (req, res, next) => {
   const { userId, id } = req.params;
   const { title, deadline, complete } = req.body;
@@ -86,7 +104,6 @@ router.put("/users/:userId/todos/:id", async (req, res, next) => {
   }
 });
 
-// DELETE TODO
 router.delete("/users/:userId/todos/:id", async (req, res, next) => {
   const { userId, id } = req.params;
   const dbConnection = db.getDb();
@@ -103,3 +120,4 @@ router.delete("/users/:userId/todos/:id", async (req, res, next) => {
 });
 
 module.exports = router;
+
