@@ -54,9 +54,12 @@
               <a href="?<%= baseUrl %>&sortBy=deadline&sortMode=asc" class="btn btn-success w-auto"><i class="fa-solid fa-sort me-2"></i>Sort by deadline</a>
               <% } %>
             </div>
-            <div class="col-12 col-md-8 col-lg-9 d-flex justify-content-start">
+            <div class="col-6 col-md-6 col-lg-7 d-flex justify-content-start">
               <a class="btn btn-warning me-2 w-auto" href="./todos" role="button"><i class="fa-solid fa-rotate"></i></a>
               <button type="submit" class="btn btn-info w-auto"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div class="col-6 col-md-2 col-lg-2 d-flex justify-content-end">
+              <a class="btn btn-secondary w-auto" href="/" role="button"><i class="fa-solid fa-rotate-left"></i></a>
             </div>
           </div>
         </form>
@@ -66,7 +69,7 @@
         <form id="addTodoForm" method="post" class="mx-3">
           <div class="input-group my-2">
             <input type="text" class="form-control" id="newTitle" name="title" placeholder="Add title" />
-            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-circle-down"></i></button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-circle-down"></i></button>
           </div>
         </form>
       </div>

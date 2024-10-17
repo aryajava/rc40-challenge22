@@ -1,6 +1,6 @@
 <%- include('partials/header') %>
-<div class="row">
-  <div class="col-12 col-md-10 mt-3 mx-auto">
+<div class="row mt-3">
+  <div class="col">
     <div class="card">
       <div class="card-header text-center">
         <h3 class="card-title my-1">MongoDB Breads (Browse, Read, Edit, Add, Delete, Sort)</h3>
@@ -35,52 +35,58 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th scope="col" class="col-1">No.</th>
-              <% const baseUrl = searchPage.replace(/&?sortBy=[^&]*/g, '').replace(/&?sortMode=[^&]*/g, ''); %>
-              <% if (sortBy === 'name' && sortMode === 'asc') { %>
-              <th scope="col" class="col-4 col-md-3">
-                <a href="/?<%= baseUrl %>&sortBy=name&sortMode=desc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-up me-2"></i>Name</a>
+              <th scope="col" class="col-1 align-middle px-2">No.</th>
+              <% const baseUrl = searchPage.replace(/&?sortBy=[^&]*/g, '').replace(/&?sortMode=[^&]*/g, ''); %> <% if (sortBy === 'name' && sortMode === 'asc') { %>
+              <th scope="col" class="col-4 col-md-3 align-middle px-2">
+                <a href="/?<%= baseUrl %>&sortBy=name&sortMode=desc" class="text-black text-decoration-none"> <i class="fa-solid fa-sort-up me-2"></i>Name </a>
               </th>
               <% } else if (sortBy === 'name' && sortMode === 'desc') { %>
-              <th scope="col" class="col-4 col-md-3">
-                <a href="/?<%= baseUrl %>&sortBy=name&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-down me-2"></i>Name</a>
+              <th scope="col" class="col-4 col-md-3 align-middle px-2">
+                <a href="/?<%= baseUrl %>&sortBy=name&sortMode=asc" class="text-black text-decoration-none"> <i class="fa-solid fa-sort-down me-2"></i>Name </a>
               </th>
               <% } else { %>
-              <th scope="col" class="col-4 col-md-3">
-                <a href="/?<%= baseUrl %>&sortBy=name&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort me-2"></i>Name</a>
+              <th scope="col" class="col-4 col-md-3 align-middle px-2">
+                <a href="/?<%= baseUrl %>&sortBy=name&sortMode=asc" class="text-black text-decoration-none"> <i class="fa-solid fa-sort me-2"></i>Name </a>
               </th>
               <% } %> <% if (sortBy === 'phone' && sortMode === 'asc') { %>
-              <th scope="col" class="col-4 col-md-3">
-                <a href="/?<%= baseUrl %>&sortBy=phone&sortMode=desc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-up me-2"></i>Phone</a>
+              <th scope="col" class="col-4 col-md-3 align-middle px-2">
+                <a href="/?<%= baseUrl %>&sortBy=phone&sortMode=desc" class="text-black text-decoration-none"> <i class="fa-solid fa-sort-up me-2"></i>Phone </a>
               </th>
               <% } else if (sortBy === 'phone' && sortMode === 'desc') { %>
-              <th scope="col" class="col-4 col-md-3">
-                <a href="/?<%= baseUrl %>&sortBy=phone&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort-down me-2"></i>Phone</a>
+              <th scope="col" class="col-4 col-md-3 align-middle px-2">
+                <a href="/?<%= baseUrl %>&sortBy=phone&sortMode=asc" class="text-black text-decoration-none"> <i class="fa-solid fa-sort-down me-2"></i>Phone </a>
               </th>
               <% } else { %>
-              <th scope="col" class="col-4 col-md-3">
-                <a href="/?<%= baseUrl %>&sortBy=phone&sortMode=asc" class="text-black text-decoration-none"><i class="fa-solid fa-sort me-2"></i>Phone</a>
+              <th scope="col" class="col-4 col-md-3 align-middle px-2">
+                <a href="/?<%= baseUrl %>&sortBy=phone&sortMode=asc" class="text-black text-decoration-none"> <i class="fa-solid fa-sort me-2"></i>Phone </a>
               </th>
               <% } %>
-              <th scope="col" class="col-3">Actions</th>
+
+              <th scope="col" class="col-3 align-middle px-2">Actions</th>
             </tr>
           </thead>
           <tbody>
             <% data.forEach((user, index) => { %>
             <tr>
-              <td scope="row" class="col-1"><%= index + offset + 1 %></td>
-              <td class="col-4 col-md-3"><%= user.name %></td>
-              <td class="col-4 col-md-3"><%= user.phone %></td>
-              <td class="col-3">
-                <div class="d-flex flex-row">
+              <td scope="row" class="col-1 align-middle px-2"><%= index + offset + 1 %></td>
+              <td class="col-4 col-md-3 align-middle px-2"><%= user.name %></td>
+              <td class="col-4 col-md-3 align-middle px-2"><%= user.phone %></td>
+              <td class="col-3 align-middle px-2">
+                <div class="d-flex justify-content-center">
                   <div class="m-1">
-                    <button type="button" class="btn btn-success" onclick="showModel('edit','<%= user._id %>', '<%= user.name %>', '<%= user.phone %>')"><i class="fa-solid fa-pen"></i></button>
+                    <button type="button" class="btn btn-success" onclick="showModel('edit','<%= user._id %>', '<%= user.name %>', '<%= user.phone %>')">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
                   </div>
                   <div class="m-1">
-                    <button type="button" class="btn btn-danger" onclick="showModel('delete','<%= user._id %>', '<%= user.name %>')"><i class="fa-solid fa-trash"></i></button>
+                    <button type="button" class="btn btn-danger" onclick="showModel('delete','<%= user._id %>', '<%= user.name %>')">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
                   </div>
                   <div class="m-1">
-                    <a class="btn btn-warning" href="/users/<%= user._id %>/todos" role="button"><i class="fa-solid fa-right-to-bracket"></i></a>
+                    <a class="btn btn-warning" href="/users/<%= user._id %>/todos" role="button">
+                      <i class="fa-solid fa-right-to-bracket"></i>
+                    </a>
                   </div>
                 </div>
               </td>
@@ -98,55 +104,55 @@
           <nav aria-label="Page navigation">
             <ul class="pagination mb-0 justify-content-center justify-content-md-start">
               <% if (total > 0 && pages > 1) { %>
-                <!-- previous -->
-                <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
-                  <a class="page-link" href="?<%= searchPage %>&page=<%= page - 1 %>" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-    
-                <!-- first page -->
-                <li class="page-item <%= page === 1 ? 'active' : '' %>">
-                  <a class="page-link" href="?<%= searchPage %>&page=1">1</a>
-                </li>
-    
-                <!-- ellipsis before -->
-                <% if (page > 3) { %>
-                <li class="page-item disabled">
-                  <span class="page-link">...</span>
-                </li>
-                <% } %>
-    
-                <!-- page range around current page -->
-                <% for (let i = Math.max(2, page - 1); i <= Math.min(pages - 1, page + 1); i++) { %>
-                <li class="page-item <%= i === page ? 'active' : '' %>">
-                  <a class="page-link" href="?<%= searchPage %>&page=<%= i %>"><%= i %></a>
-                </li>
-                <% } %>
-    
-                <!-- ellipsis after -->
-                <% if (page < pages - 2) { %>
-                <li class="page-item disabled">
-                  <span class="page-link">...</span>
-                </li>
-                <% } %>
-    
-                <!-- last page -->
-                <li class="page-item <%= page === pages ? 'active' : '' %>">
-                  <a class="page-link" href="?<%= searchPage %>&page=<%= pages %>"><%= pages %></a>
-                </li>
-    
-                <!-- next -->
-                <li class="page-item <%= page === pages ? 'disabled' : '' %>">
-                  <a class="page-link" href="?<%= searchPage %>&page=<%= page + 1 %>" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
+              <!-- previous -->
+              <li class="page-item <%= page === 1 ? 'disabled' : '' %>">
+                <a class="page-link" href="?<%= searchPage %>&page=<%= page - 1 %>" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+
+              <!-- first page -->
+              <li class="page-item <%= page === 1 ? 'active' : '' %>">
+                <a class="page-link" href="?<%= searchPage %>&page=1">1</a>
+              </li>
+
+              <!-- ellipsis before -->
+              <% if (page > 3) { %>
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+              <% } %>
+
+              <!-- page range around current page -->
+              <% for (let i = Math.max(2, page - 1); i <= Math.min(pages - 1, page + 1); i++) { %>
+              <li class="page-item <%= i === page ? 'active' : '' %>">
+                <a class="page-link" href="?<%= searchPage %>&page=<%= i %>"><%= i %></a>
+              </li>
+              <% } %>
+
+              <!-- ellipsis after -->
+              <% if (page < pages - 2) { %>
+              <li class="page-item disabled">
+                <span class="page-link">...</span>
+              </li>
+              <% } %>
+
+              <!-- last page -->
+              <li class="page-item <%= page === pages ? 'active' : '' %>">
+                <a class="page-link" href="?<%= searchPage %>&page=<%= pages %>"><%= pages %></a>
+              </li>
+
+              <!-- next -->
+              <li class="page-item <%= page === pages ? 'disabled' : '' %>">
+                <a class="page-link" href="?<%= searchPage %>&page=<%= page + 1 %>" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
               <% } else { %>
-                <!-- Single page case -->
-                <li class="page-item active">
-                  <a class="page-link" href="#">1</a>
-                </li>
+              <!-- Single page case -->
+              <li class="page-item active">
+                <a class="page-link" href="#">1</a>
+              </li>
               <% } %>
             </ul>
           </nav>
@@ -181,14 +187,14 @@
               <input type="text" class="form-control" name="phone" id="phoneFormModal" placeholder="Insert your phone" value="" autocomplete="off" />
             </div>
           </div>
-          <div class="modal-body" id="deleteContent">
-            <p>Apakah kamu yakin akan menghapus data '<span id="deleteItemName"></span>'?</p>
+          <div class="modal-body p-0" id="deleteContent">
+            <p class="mb-0">Apakah kamu yakin akan menghapus data '<span id="deleteItemName"></span>'?</p>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          <button type="submit" class="btn btn-warning" id="saveButton">Save</button>
-          <button type="button" class="btn btn-warning" id="deleteButton" onclick="handleDelete()">Yes</button>
+          <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
+          <button type="button" class="btn btn-primary" id="deleteButton" onclick="handleDelete()">Yes</button>
         </div>
       </form>
     </div>
@@ -232,8 +238,8 @@
       showModalLabel.innerText = mode === "edit" ? "Edit User" : "Add User";
       document.getElementById("nameFormModal").value = name;
       document.getElementById("phoneFormModal").value = phone;
-      formContent.style.display = "block";
-      phoneContent.style.display = "block";
+      formContent.style.display = "flex";
+      phoneContent.style.display = "flex";
       deleteContent.style.display = "none";
       saveButton.style.display = "block";
       deleteButton.style.display = "none";
@@ -242,7 +248,7 @@
       document.getElementById("deleteItemName").innerText = name;
       formContent.style.display = "none";
       phoneContent.style.display = "none";
-      deleteContent.style.display = "block";
+      deleteContent.style.display = "flex";
       saveButton.style.display = "none";
       deleteButton.style.display = "block";
     }

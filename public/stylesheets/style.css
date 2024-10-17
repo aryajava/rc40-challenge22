@@ -19,3 +19,20 @@
   transform: translateY(-50%);
 }
 
+th a {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+th i {
+  margin-left: 5px; /* Jarak antara ikon dan teks */
+}
+
+/* Atur agar teks berada di tengah dan rapi di dalam table header */
+th {
+  vertical-align: middle !important;
+  text-align: start;
+  padding: 10px;
+}
+

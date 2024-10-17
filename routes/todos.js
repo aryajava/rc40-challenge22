@@ -78,11 +78,17 @@ router.post("/users/:userId/todos", async (req, res, next) => {
   const { title } = req.body;
   const dbConnection = db.getDb();
 
+  const addDays = (date, days) => {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  };
+
   try {
     const todoData = {
       title,
       complete: false,
-      deadline: new Date(),
+      deadline: addDays(new Date(), 1),
       executor: new ObjectId(userId),
     };
     const result = await Todo.save(dbConnection, todoData);
