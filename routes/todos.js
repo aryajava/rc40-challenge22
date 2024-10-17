@@ -27,8 +27,6 @@ router.get("/users/:userId/todos", async (req, res, next) => {
       executor: new ObjectId(userId),
     };
 
-    console.log(query, sort, offset, parseInt(limit));
-
     const todos = await Todo.getAll(dbConnection, query, sort, offset, parseInt(limit));
 
     if (req.xhr) {
@@ -104,16 +102,15 @@ router.put("/users/:userId/todos/:id", async (req, res, next) => {
   const dbConnection = db.getDb();
 
   try {
-    console.log("PUT Request Data:", { userId, id, title, deadline, complete });
     const todoData = {
       title,
       deadline: new Date(deadline),
       complete: complete === "on",
       executor: new ObjectId(userId),
     };
-    console.log("PUT Todo Data:", todoData);
+
     const result = await Todo.update(dbConnection, new ObjectId(userId), new ObjectId(id), todoData);
-    console.log("PUT Result:", result);
+
     if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Todo not found" });
     }
@@ -130,9 +127,9 @@ router.delete("/users/:userId/todos/:id", async (req, res, next) => {
 
   try {
     id = new ObjectId(id);
-    console.log("DELETE Request Data:", { userId, id });
+
     const result = await Todo.delete(dbConnection, userId, id);
-    console.log("DELETE Result:", result);
+
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: "Todo not found" });
     }

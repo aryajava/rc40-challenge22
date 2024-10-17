@@ -2,8 +2,8 @@
 <div class="row mt-3">
   <div class="col">
     <div class="card">
-      <div class="card-header text-center">
-        <h3 class="card-title my-1">MongoDB Breads (Browse, Read, Edit, Add, Delete, Sort)</h3>
+      <div class="card-header">
+        <h3 class="card-title my-1 text-center">MongoDB Breads (Browse, Read, Edit, Add, Delete, Sort)</h3>
       </div>
       <div class="card-body">
         <div class="row">
@@ -72,7 +72,7 @@
               <td class="col-4 col-md-3 align-middle px-2"><%= user.name %></td>
               <td class="col-4 col-md-3 align-middle px-2"><%= user.phone %></td>
               <td class="col-3 align-middle px-2">
-                <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-start">
                   <div class="m-1">
                     <button type="button" class="btn btn-success" onclick="showModel('edit','<%= user._id %>', '<%= user.name %>', '<%= user.phone %>')">
                       <i class="fa-solid fa-pen"></i>
@@ -193,17 +193,14 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
-          <button type="submit" class="btn btn-primary" id="saveButton">Save changes</button>
-          <button type="button" class="btn btn-primary" id="deleteButton" onclick="handleDelete()">Yes</button>
+          <button type="submit" class="btn btn-primary" id="saveButton">Save</button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
-<script src="/vendor/jquery/jquery.min.js"></script>
-<script src="/vendor/popper/popper.min.js"></script>
-<script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
+<%- include('partials/vendorScripts') %>
 <script>
   document.getElementById("limit").addEventListener("change", function () {
     updateUrlParams({ limit: this.value });
@@ -232,28 +229,36 @@
     const phoneContent = document.getElementById("phoneContent");
     const deleteContent = document.getElementById("deleteContent");
     const saveButton = document.getElementById("saveButton");
-    const deleteButton = document.getElementById("deleteButton");
 
-    if (mode === "edit" || mode === "add") {
-      showModalLabel.innerText = mode === "edit" ? "Edit User" : "Add User";
+    if (currentMode === "edit" || currentMode === "add") {
+      showModalLabel.innerText = currentMode === "edit" ? "Edit User" : "Add User";
       document.getElementById("nameFormModal").value = name;
       document.getElementById("phoneFormModal").value = phone;
+      saveButton.innerText = currentMode === "edit" ? "Save changes" : "Save";
+      if (currentMode === "edit") {
+        saveButton.classList.replace("btn-primary", "btn-success");
+      } else {
+        saveButton.classList.replace("btn-success", "btn-primary");
+      }
       formContent.style.display = "flex";
       phoneContent.style.display = "flex";
       deleteContent.style.display = "none";
-      saveButton.style.display = "block";
-      deleteButton.style.display = "none";
-    } else if (mode === "delete") {
+    }
+    if (currentMode === "delete") {
       showModalLabel.innerText = "Delete Confirmation";
       document.getElementById("deleteItemName").innerText = name;
+      saveButton.innerText = "Yes";
+      saveButton.classList.replace("btn-primary", "btn-danger");
+      saveButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        handleDelete();
+      });
       formContent.style.display = "none";
       phoneContent.style.display = "none";
       deleteContent.style.display = "flex";
-      saveButton.style.display = "none";
-      deleteButton.style.display = "block";
     }
 
-    var showModal = new bootstrap.Modal(document.getElementById("showModal"));
+    const showModal = new bootstrap.Modal(document.getElementById("showModal"));
     showModal.show();
   };
 
@@ -279,7 +284,6 @@
       }
 
       const result = await response.json();
-      console.log(result);
       location.reload();
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
@@ -289,7 +293,7 @@
   const showDeleteModal = (id, name) => {
     currentUserId = id;
     document.getElementById("deleteItemName").innerText = name;
-    var deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
+    const deleteModal = new bootstrap.Modal(document.getElementById("deleteModal"));
     deleteModal.show();
   };
 
@@ -307,7 +311,6 @@
       }
 
       const result = await response.json();
-      console.log(result);
       location.reload();
     } catch (error) {
       console.error("There was a problem with the fetch operation:", error);
