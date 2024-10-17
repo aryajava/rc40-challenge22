@@ -1,15 +1,17 @@
 const { MongoClient } = require("mongodb");
+require("dotenv").config();
 
 let dbConnection;
 
 const connectToDb = async () => {
-  const client = new MongoClient("mongodb://localhost:27017");
+  const client = new MongoClient(process.env.MONGODB_URI);
 
   try {
     await client.connect();
-    dbConnection = client.db("rc40_c22");
+    dbConnection = client.db(process.env.DB_NAME);
   } catch (err) {
-    console.log(err);
+    console.error(err);
+    process.exit(1);
   }
 };
 

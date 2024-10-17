@@ -22,6 +22,15 @@ To install the dependencies, run the following command:
 npm install
 ```
 
+Create an ```.env``` file in the root of your project. Add a session secret in it:
+
+```bash
+MONGODB_URI = your_uri_here
+DB_NAME = your_db_name_here
+USERS_COLLECTION = your_collection_for_users_here
+TODOS_COLLECTION = your_collection_for_todos_here
+```
+
 ## Usage
 
 To start the application, use the following command:

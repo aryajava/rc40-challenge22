@@ -1,6 +1,12 @@
 <%- include('partials/header.ejs') %>
-
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<div class="row">
+  <div class="col-md-10 mt-3 mx-auto">
+    <h1 class="error-msg text-center"><%= message %></h1>
+    <h2 class="error-code text-center"><%= error.status %></h2>
+    <% if (error.stack) { %>
+    <pre class="error-stack"><%= error.stack %></pre>
+    <% } %>
+  </div>
+</div>
 <%- include('partials/footer.ejs') %>
+
