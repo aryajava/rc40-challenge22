@@ -2,9 +2,34 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 const Todo = require("../models/Todo");
+const User = require("../models/User");
 const { ObjectId } = require("mongodb");
 
-router.get("/users/:userId/todos", async (req, res, next) => {
+const validateUserId = async (req, res, next) => {
+  const { userId } = req.params;
+  const dbConnection = db.getDb();
+
+  try {
+    if (!ObjectId.isValid(userId)) {
+      const error = new Error("Invalid user ID");
+      error.status = 400;
+      throw error;
+    }
+
+    const user = await User.getById(dbConnection, userId);
+    if (!user) {
+      const error = new Error("User not found");
+      error.status = 404;
+      throw error;
+    }
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+router.get("/users/:userId/todos", validateUserId, async (req, res, next) => {
   const { userId } = req.params;
   const { page = 1, limit = 10, title = "", complete = "", startdateDeadline = "", enddateDeadline = "", sortBy = "_id", sortMode = "desc" } = req.query;
   const dbConnection = db.getDb();
@@ -56,14 +81,22 @@ router.get("/users/:userId/todos", async (req, res, next) => {
   }
 });
 
-router.get("/users/:userId/todos/:id", async (req, res, next) => {
+router.get("/users/:userId/todos/:id", validateUserId, async (req, res, next) => {
   const { userId, id } = req.params;
   const dbConnection = db.getDb();
 
   try {
+    if (!ObjectId.isValid(id)) {
+      const error = new Error("Invalid todo ID");
+      error.status = 400;
+      throw error;
+    }
+
     const todo = await Todo.getById(dbConnection, userId, id);
     if (!todo) {
-      return res.status(404).json({ message: "Todo not found" });
+      const error = new Error("Todo not found");
+      error.status = 404;
+      throw error;
     }
     res.json(todo);
   } catch (err) {
@@ -71,7 +104,7 @@ router.get("/users/:userId/todos/:id", async (req, res, next) => {
   }
 });
 
-router.post("/users/:userId/todos", async (req, res, next) => {
+router.post("/users/:userId/todos", validateUserId, async (req, res, next) => {
   const { userId } = req.params;
   const { title } = req.body;
   const dbConnection = db.getDb();
@@ -96,12 +129,18 @@ router.post("/users/:userId/todos", async (req, res, next) => {
   }
 });
 
-router.put("/users/:userId/todos/:id", async (req, res, next) => {
+router.put("/users/:userId/todos/:id", validateUserId, async (req, res, next) => {
   const { userId, id } = req.params;
   const { title, deadline, complete } = req.body;
   const dbConnection = db.getDb();
 
   try {
+    if (!ObjectId.isValid(id)) {
+      const error = new Error("Invalid todo ID");
+      error.status = 400;
+      throw error;
+    }
+
     const todoData = {
       title,
       deadline: new Date(deadline),
@@ -112,7 +151,9 @@ router.put("/users/:userId/todos/:id", async (req, res, next) => {
     const result = await Todo.update(dbConnection, new ObjectId(userId), new ObjectId(id), todoData);
 
     if (result.matchedCount === 0) {
-      return res.status(404).json({ message: "Todo not found" });
+      const error = new Error("Todo not found");
+      error.status = 404;
+      throw error;
     }
     res.json({ _id: id, ...todoData });
   } catch (err) {
@@ -121,17 +162,25 @@ router.put("/users/:userId/todos/:id", async (req, res, next) => {
   }
 });
 
-router.delete("/users/:userId/todos/:id", async (req, res, next) => {
+router.delete("/users/:userId/todos/:id", validateUserId, async (req, res, next) => {
   let { userId, id } = req.params;
   const dbConnection = db.getDb();
 
   try {
+    if (!ObjectId.isValid(id)) {
+      const error = new Error("Invalid todo ID");
+      error.status = 400;
+      throw error;
+    }
+
     id = new ObjectId(id);
 
     const result = await Todo.delete(dbConnection, userId, id);
 
     if (result.deletedCount === 0) {
-      return res.status(404).json({ message: "Todo not found" });
+      const error = new Error("Todo not found");
+      error.status = 404;
+      throw error;
     }
     res.json({ _id: id });
   } catch (err) {

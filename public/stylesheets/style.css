@@ -36,26 +36,15 @@ th {
 }
 
 .error-msg {
-  margin: 3rem auto 0;
-  font-family: "Lucida Grande", Helvetica, Arial, sans-serif !important;
-  font-size: 3rem;
-  font-weight: bold;
   color: #656565;
 }
 
 .error-code {
-  margin: 2rem auto;
-  font-size: 5rem !important;
-  font-weight: bold;
   color: #656565;
 }
 
 .error-stack {
-  display: block;
-  margin: 2rem auto 0;
   background-color: #ffbfc2;
-  color: #000;
-  font-weight: 500;
   padding: 1rem;
   border-radius: 10px;
 }

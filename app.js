@@ -25,11 +25,11 @@ app.use("/", todosRouter);
 
 db.connectToDb();
 
-app.use((_, next) => {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
-app.use((err, req, res, _) => {
+app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
   res.status(err.status || 500);
@@ -37,4 +37,3 @@ app.use((err, req, res, _) => {
 });
 
 module.exports = app;
-
