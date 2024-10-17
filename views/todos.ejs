@@ -11,32 +11,32 @@
           <input type="hidden" name="sortBy" value="<%= sortBy %>" />
           <input type="hidden" name="sortMode" value="<%= sortMode %>" />
           <div class="row mb-3">
-            <div class="col-md-3 align-self-center">
+            <div class="col-12 col-md-4 col-lg-3 align-self-center">
               <label for="title">Title</label>
             </div>
-            <div class="col-md-9 align-self-center">
+            <div class="col-12 col-md-8 col-lg-9 align-self-center">
               <input type="text" class="form-control" name="title" value="<%= title %>" id="title" placeholder="Insert your title" />
             </div>
           </div>
           <div class="row mb-3">
-            <div class="col-md-3 align-self-center">
+            <div class="col-12 col-md-4 col-lg-3 align-self-center">
               <label for="startdate">Deadline</label>
             </div>
-            <div class="col-md-4 align-self-center">
+            <div class="col-12 col-md-3 col-lg-4 align-self-center">
               <input type="datetime-local" class="form-control" name="startdateDeadline" value="<%= startdateDeadline %>" id="startdate" />
             </div>
-            <div class="col-md-1 align-self-center text-center">
+            <div class="col-12 col-md-2 col-lg-1 align-self-center text-center">
               <label for="enddate">s.d.</label>
             </div>
-            <div class="col-md-4 align-self-center">
+            <div class="col-12 col-md-3 col-lg-4 align-self-center">
               <input type="datetime-local" class="form-control" name="enddateDeadline" value="<%= enddateDeadline %>" id="enddate" />
             </div>
           </div>
           <div class="row mb-3">
-            <div class="col-md-3 align-self-center">
+            <div class="col-12 col-md-4 col-lg-3 align-self-center">
               <label for="complete">Complete</label>
             </div>
-            <div class="col-md-9 align-self-center">
+            <div class="col-12 col-md-8 col-lg-9 align-self-center">
               <select class="form-select" name="complete" id="complete">
                 <option selected disabled class="d-none">&minus; Select Complete &minus;</option>
                 <option value="false" <%=complete==='false' ? 'selected' : '' %>>Not Yet</option>
@@ -90,26 +90,26 @@
           <input type="hidden" name="id" id="todoId" />
           <div id="editFields">
             <div class="row mb-3">
-              <div class="col-md-3 align-self-center">
+              <div class="col-12 col-md-4 col-lg-3 align-self-center">
                 <label for="todoTitle">Title</label>
               </div>
-              <div class="col-md-9 align-self-center">
+              <div class="col-12 col-md-8 col-lg-9 align-self-center">
                 <input type="text" class="form-control" id="todoTitle" name="title" />
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3 align-self-center">
+              <div class="col-12 col-md-4 col-lg-3 align-self-center">
                 <label for="todoDeadline">Deadline</label>
               </div>
-              <div class="col-md-9 align-self-center">
+              <div class="col-12 col-md-8 col-lg-9 align-self-center">
                 <input type="datetime-local" class="form-control" id="todoDeadline" name="deadline" />
               </div>
             </div>
             <div class="row mb-3">
-              <div class="col-md-3 align-self-center">
+              <div class="col-12 col-md-4 col-lg-3 align-self-center">
                 <label for="todoComplete" class="form-check-label">Complete</label>
               </div>
-              <div class="col-md-9 align-self-center">
+              <div class="col-12 col-md-8 col-lg-9 align-self-center">
                 <input type="checkbox" class="form-check-input" name="complete" id="todoComplete" />
                 <label for="todoComplete" class="form-check-label">Done</label>
               </div>
