@@ -2,7 +2,9 @@
 <div class="row mt-3">
   <div class="col">
     <div class="card">
-      <div class="card-header">Todos for User <%= userId %></div>
+      <div class="card-header">
+        <h1 class="text-center mb-0"">Todo List</h1>
+      </div>
       <div class="card-body">
         <form action="" method="get">
           <input type="hidden" name="sortBy" value="<%= sortBy %>">
@@ -69,59 +71,50 @@
         </form>
       </div>
       <div class="row m-0">
-        <ul class="list-group p-0">
-          <% todos.forEach(todo => { %>
-            <% const now = new Date();
-            const date = new Date(todo.deadline);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
-            const formattedDateYear = `${year}-${month}-${day} ${hours}:${minutes}`;
-            const passedDeadline = date < now && !todo.complete;
-            %>
-          <li
-            class="list-group-item border-0 rounded d-flex flex-md-row my-2 justify-content-between align-items-start align-items-md-center position-relative <%= todo.complete ? 'bg-green-pastel' : (passedDeadline ? 'bg-red-pastel' : 'bg-grey-pastel') %>"
-          >
-            <p class="fs-6 fw-medium text-center text-md-start d-flex align-items-center m-0 mb-md-0"><%= formattedDate %> <%= todo.title %></p>
-            <div class="d-flex h-center">
-              <button class="btn btn-sm me-2" data-bs-toggle="modal" data-bs-target="#todoModal" data-id="<%= todo._id %>" data-title="<%= todo.title %>" data-deadline="<%= formattedDateYear %>" data-complete="<%= todo.complete %>" data-action="edit"><i class="fa-solid fa-pen"></i></button>
-              <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#todoModal" data-id="<%= todo._id %>" data-title="<%= todo.title %>" data-action="delete"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </li>
-          <% }) %>
+        <ul class="list-group p-0" id="todoList">
+          
         </ul>
       </div>
-      <div class="card-footer text-muted">Total Todos: <%= total %></div>
     </div>
   </div>
 </div>
 
 <!-- Todo Modal -->
 <div class="modal fade" id="todoModal" tabindex="-1" aria-labelledby="todoModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-top modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="todoModalLabel">Edit Todo</h5>
+        <h5 class="modal-title" id="todoModalLabel">Form</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <form id="todoForm" method="post">
         <div class="modal-body">
           <input type="hidden" name="id" id="todoId">
           <div id="editFields">
-            <div class="mb-3">
-              <label for="todoTitle" class="form-label">Title</label>
-              <input type="text" class="form-control" id="todoTitle" name="title">
+            <div class="row mb-3">
+              <div class="col-md-3 align-self-center"">
+                <label for="todoTitle">Title</label>
+              </div>
+              <div class="col-md-9 align-self-center"">
+                <input type="text" class="form-control" id="todoTitle" name="title">
+              </div>
             </div>
-            <div class="mb-3">
-              <label for="todoDeadline" class="form-label">Deadline</label>
-              <input type="datetime-local" class="form-control" id="todoDeadline" name="deadline">
+            <div class="row mb-3">
+              <div class="col-md-3 align-self-center"">
+                <label for="todoDeadline">Deadline</label>
+              </div>
+              <div class="col-md-9 align-self-center"">
+                <input type="datetime-local" class="form-control" id="todoDeadline" name="deadline">
+              </div>
             </div>
-            <div class="mb-3">
-              <input type="checkbox" class="form-check-input" name="complete" id="todoComplete" />
-              <label for="todoComplete" class="form-check-label">Done</label>
+            <div class="row mb-3">
+              <div class="col-md-3 align-self-center"">
+                <label for="todoComplete" class="form-check-label">Complete</label>
+              </div>
+              <div class="col-md-9 align-self-center"">
+                <input type="checkbox" class="form-check-input" name="complete" id="todoComplete" />
+                <label for="todoComplete" class="form-check-label">Done</label>
+              </div>
             </div>
           </div>
           <div id="deleteMessage" class="d-none">
@@ -142,6 +135,80 @@
 <script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <script>
 $(document).ready(function() {
+  let page = 1;
+  const limit = 10;
+  const userId = '<%= userId %>';
+  let isLoading = false;
+
+  function loadTodos() {
+    if (isLoading) return;
+    isLoading = true;
+
+    $.ajax({
+      url: `/users/${userId}/todos`,
+      method: 'GET',
+      data: {
+        page: page,
+        limit: limit,
+        title: '<%= title %>',
+        complete: '<%= complete %>',
+        startdateDeadline: '<%= startdateDeadline %>',
+        enddateDeadline: '<%= enddateDeadline %>',
+        sortBy: '<%= sortBy %>',
+        sortMode: '<%= sortMode %>'
+      },
+      success: function(todos) {
+        if (todos.length === 0) {
+          $(window).off('scroll', onScroll);
+          return;
+        }
+        todos.forEach(todo => {
+          const now = new Date();
+          const date = new Date(todo.deadline);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+          const hours = String(date.getHours()).padStart(2, '0');
+          const minutes = String(date.getMinutes()).padStart(2, '0');
+          const formattedDate = `${day}-${month}-${year} ${hours}:${minutes}`;
+          const formattedDateYear = `${year}-${month}-${day} ${hours}:${minutes}`;
+          const passedDeadline = date < now && !todo.complete;
+
+          if ($(`#todoList li[data-id="${todo._id}"]`).length === 0) {
+            const todoItem = `
+              <li class="list-group-item border-0 rounded d-flex flex-md-row my-2 justify-content-between align-items-start align-items-md-center position-relative ${todo.complete ? 'bg-success-subtle text-success-emphasis' : (passedDeadline ? 'bg-danger-subtle text-danger-emphasis' : 'bg-secondary-subtle text-secondary-emphasis')}" data-id="${todo._id}">
+                <p class="fs-6 h-center fw-medium text-start d-flex align-items-center m-0 mb-md-0">${formattedDate} ${todo.title}</p>
+                <div class="d-flex h-center">
+                  <button class="btn btn-sm me-2 ${todo.complete ? 'text-success-emphasis' : (passedDeadline ? 'text-danger-emphasis' : 'text-secondary-emphasis')}" data-bs-toggle="modal" data-bs-target="#todoModal" data-id="${todo._id}" data-title="${todo.title}" data-deadline="${formattedDateYear}" data-complete="${todo.complete}" data-action="edit"><i class="fa-solid fa-pen"></i></button>
+                  <button class="btn btn-sm ${todo.complete ? 'text-success-emphasis' : (passedDeadline ? 'text-danger-emphasis' : 'text-secondary-emphasis')}" data-bs-toggle="modal" data-id="${todo._id}" data-title="${todo.title}" data-action="delete"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </li>
+            `;
+            $('#todoList').append(todoItem);
+          }
+        });
+        page++;
+        isLoading = false;
+
+        if ($(document).height() <= $(window).height()) {
+          loadTodos();
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error(error);
+        isLoading = false;
+      }
+    });
+  }
+
+  function onScroll() {
+    if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+      loadTodos();
+    }
+  }
+
+  $(window).on('scroll', onScroll);
+
   $('#todoModal').on('show.bs.modal', function(event) {
     var button = $(event.relatedTarget);
     var id = button.data('id');
@@ -155,7 +222,7 @@ $(document).ready(function() {
       var deadline = button.data('deadline');
       var complete = button.data('complete');
       
-      modal.find('#todoModalLabel').text('Edit Todo');
+      modal.find('#todoModalLabel').text('Update Todo');
       modal.find('#todoForm').attr('action', '');
       modal.find('#todoTitle').val(title);
       modal.find('#todoDeadline').val(deadline);
@@ -165,7 +232,7 @@ $(document).ready(function() {
       modal.find('#modalSubmitButton').text('Save changes').removeClass('btn-danger').addClass('btn-primary');
     } else if (action === 'delete') {
       var title = button.data('title');
-      modal.find('#todoModalLabel').text('Delete Todo');
+      modal.find('#todoModalLabel').text('Delete Confirmation');
       modal.find('#todoForm').attr('action', '');
       modal.find('#deleteMessage #todoTitle').text(title);
       modal.find('#editFields').addClass('d-none');
@@ -214,6 +281,8 @@ $(document).ready(function() {
       }
     });
   });
+
+  loadTodos();
 });
 </script>
 <%- include('partials/footer') %>

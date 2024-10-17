@@ -31,6 +31,10 @@ router.get("/users/:userId/todos", async (req, res, next) => {
 
     const todos = await Todo.getAll(dbConnection, query, sort, offset, parseInt(limit));
 
+    if (req.xhr) {
+      return res.json(todos);
+    }
+
     const total = await Todo.getCount(dbConnection, query);
     const pages = Math.ceil(total / limit);
 
