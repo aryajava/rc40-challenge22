@@ -27,9 +27,10 @@ router.get("/users/:userId/todos", async (req, res, next) => {
       executor: new ObjectId(userId),
     };
 
-    console.log(query);
+    console.log(query, sort, offset, parseInt(limit));
 
     const todos = await Todo.getAll(dbConnection, query, sort, offset, parseInt(limit));
+
     const total = await Todo.getCount(dbConnection, query);
     const pages = Math.ceil(total / limit);
 
@@ -78,7 +79,7 @@ router.post("/users/:userId/todos", async (req, res, next) => {
       title,
       complete: false,
       deadline: new Date(),
-      executor: userId,
+      executor: new ObjectId(userId),
     };
     const result = await Todo.save(dbConnection, todoData);
     res.status(201).json({ _id: result.insertedId, ...todoData });
@@ -93,28 +94,41 @@ router.put("/users/:userId/todos/:id", async (req, res, next) => {
   const dbConnection = db.getDb();
 
   try {
-    const todoData = { title, deadline: new Date(deadline), complete };
-    const result = await Todo.update(dbConnection, userId, id, todoData);
+    console.log("PUT Request Data:", { userId, id, title, deadline, complete });
+    const todoData = {
+      title,
+      deadline: new Date(deadline),
+      complete: complete === "on",
+      executor: new ObjectId(userId),
+    };
+    console.log("PUT Todo Data:", todoData);
+    const result = await Todo.update(dbConnection, new ObjectId(userId), new ObjectId(id), todoData);
+    console.log("PUT Result:", result);
     if (result.matchedCount === 0) {
       return res.status(404).json({ message: "Todo not found" });
     }
     res.json({ _id: id, ...todoData });
   } catch (err) {
+    console.error("PUT Error:", err);
     next(err);
   }
 });
 
 router.delete("/users/:userId/todos/:id", async (req, res, next) => {
-  const { userId, id } = req.params;
+  let { userId, id } = req.params;
   const dbConnection = db.getDb();
 
   try {
+    id = new ObjectId(id);
+    console.log("DELETE Request Data:", { userId, id });
     const result = await Todo.delete(dbConnection, userId, id);
+    console.log("DELETE Result:", result);
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: "Todo not found" });
     }
     res.json({ _id: id });
   } catch (err) {
+    console.error("DELETE Error:", err);
     next(err);
   }
 });

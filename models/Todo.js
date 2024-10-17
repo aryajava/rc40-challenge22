@@ -41,7 +41,7 @@ class Todo {
 
   static async getById(db, userId, todoId) {
     const todosCollection = db.collection("todos");
-    const todo = await todosCollection.findOne({ _id: ObjectId(todoId), executor: ObjectId(userId) });
+    const todo = await todosCollection.findOne({ _id: new ObjectId(todoId), executor: new ObjectId(userId) });
     return todo;
   }
 
@@ -55,13 +55,13 @@ class Todo {
   static async update(db, userId, todoId, todoData) {
     this.validate(todoData);
     const todosCollection = db.collection("todos");
-    const result = await todosCollection.updateOne({ _id: ObjectId(todoId), executor: ObjectId(userId) }, { $set: todoData });
+    const result = await todosCollection.updateOne({ _id: new ObjectId(todoId), executor: new ObjectId(userId) }, { $set: todoData });
     return result;
   }
 
   static async delete(db, userId, todoId) {
     const todosCollection = db.collection("todos");
-    const result = await todosCollection.deleteOne({ _id: ObjectId(todoId), executor: ObjectId(userId) });
+    const result = await todosCollection.deleteOne({ _id: new ObjectId(todoId), executor: new ObjectId(userId) });
     return result;
   }
 }
